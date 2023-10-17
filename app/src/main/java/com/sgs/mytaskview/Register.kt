@@ -3,6 +3,8 @@ package com.sgs.mytaskview
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -23,6 +25,29 @@ class Register : AppCompatActivity() {
         val repo = LoginRepo(LoginDataBase.getDatabase(this@Register))
         val factory = LoginFactory(repo)
         viewModel = ViewModelProvider(this,factory)[LoginViewModel::class.java]
+
+
+        val textWatchers = listOf(
+            binding.userName, binding.password,binding.mobile,binding.lastName,binding.firstName
+        ).map { editText ->
+            editText.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+                override fun afterTextChanged(s: Editable?) {
+                    updateSubmitButtonBackground()
+                }
+            })
+        }
+
+        updateSubmitButtonBackground()
 
         binding.register.setOnClickListener {
             when{
@@ -78,6 +103,18 @@ class Register : AppCompatActivity() {
         intent = Intent(this@Register,MainActivity::class.java)
         startActivity(intent)
         finish()
+    }
+
+    private fun updateSubmitButtonBackground() {
+        val allFieldsFilled =
+            listOf( binding.userName, binding.password,binding.mobile,binding.lastName,binding.firstName).all { editText ->
+                editText.text.toString().isNotEmpty()
+            }
+        if (allFieldsFilled) {
+            binding.register.setBackgroundResource(R.drawable.background2)
+        } else {
+            binding.register.setBackgroundResource(R.drawable.background1)
+        }
     }
 
 }

@@ -4,7 +4,10 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.lifecycle.ViewModelProvider
 import com.sgs.mytaskview.database.LoginDataBase
 import com.sgs.mytaskview.database.LoginFactory
@@ -24,6 +27,32 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         viewModel = ViewModelProvider(this, LoginFactory(LoginRepo(LoginDataBase.getDatabase(this@MainActivity))))[LoginViewModel::class.java]
+
+        val callback = this.onBackPressedDispatcher.addCallback(this) {
+            finish()
+          }
+
+        val textWatchers = listOf(
+            binding.name, binding.password,
+        ).map { editText ->
+            editText.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+                override fun afterTextChanged(s: Editable?) {
+                    updateSubmitButtonBackground()
+                }
+              })
+           }
+
+        updateSubmitButtonBackground()
 
 
         binding.save.setOnClickListener {
@@ -69,4 +98,17 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
+    private fun updateSubmitButtonBackground() {
+        val allFieldsFilled =
+            listOf(binding.name, binding.password).all { editText ->
+                editText.text.toString().isNotEmpty()
+            }
+        if (allFieldsFilled) {
+            binding.save.setBackgroundResource(R.drawable.background2)
+        } else {
+            binding.save.setBackgroundResource(R.drawable.background1)
+            }
+        }
+
 }
