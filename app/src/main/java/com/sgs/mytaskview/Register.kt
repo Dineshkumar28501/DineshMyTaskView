@@ -27,7 +27,7 @@ class Register : AppCompatActivity() {
         viewModel = ViewModelProvider(this,factory)[LoginViewModel::class.java]
 
 
-        val textWatchers = listOf(
+        listOf(
             binding.userName, binding.password,binding.mobile,binding.lastName,binding.firstName
         ).map { editText ->
             editText.addTextChangedListener(object : TextWatcher {

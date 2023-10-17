@@ -28,11 +28,11 @@ class MainActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this, LoginFactory(LoginRepo(LoginDataBase.getDatabase(this@MainActivity))))[LoginViewModel::class.java]
 
-        val callback = this.onBackPressedDispatcher.addCallback(this) {
+        this.onBackPressedDispatcher.addCallback(this) {
             finish()
           }
 
-        val textWatchers = listOf(
+        listOf(
             binding.name, binding.password,
         ).map { editText ->
             editText.addTextChangedListener(object : TextWatcher {
